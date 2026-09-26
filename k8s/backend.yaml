@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easy-work-backend
+  labels:
+    app: easy-work-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: easy-work-backend
+  template:
+    metadata:
+      labels:
+        app: easy-work-backend
+    spec:
+      containers:
+      - name: backend
+        image: 396633054990.dkr.ecr.us-east-1.amazonaws.com/easy-work-ent-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 150m
+            memory: 128Mi
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: easy-work-backend
+  ports:
+  - port: 5000
+    targetPort: 5000

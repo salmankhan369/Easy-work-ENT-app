@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easy-work-frontend
+  labels:
+    app: easy-work-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: easy-work-frontend
+  template:
+    metadata:
+      labels:
+        app: easy-work-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: 396633054990.dkr.ecr.us-east-1.amazonaws.com/easy-work-ent-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 30m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: easy-work-frontend
+  ports:
+  - port: 80
+    targetPort: 80
